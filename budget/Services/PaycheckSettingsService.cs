@@ -8,14 +8,32 @@ namespace budget.Services
         {
             _psRepo = psRepo;
         }
+
+        private PaycheckSettings ConvertWholeNumberToDecimal(PaycheckSettings psData)
+        {
+            // Convert taxPercent to decimal
+            decimal taxPercentDecimal = psData.taxPercent / 100m;
+            psData.taxPercent = taxPercentDecimal;
+
+            // Convert tithePercent to decimal
+            decimal tithePercentDecimal = psData.tithePercent / 100m;
+            psData.tithePercent = tithePercentDecimal;
+
+            // Convert savingsPercent to decimal
+            decimal savingsPercentDecimal = psData.savingsPercent / 100m;
+            psData.savingsPercent = savingsPercentDecimal;
+
+            return (psData);
+        }
         
-        internal PaycheckSettings Create (PaycheckSettings psData, Account account)
+        internal PaycheckSettings Create(PaycheckSettings psData, Account account)
         {
             PaycheckSettings ps = _psRepo.GetByAccountId(account.Id);
             if (ps != null)
             {
                 throw new Exception("you can't create more than one set of settings");
             }
+            psData = ConvertWholeNumberToDecimal(psData);
             return _psRepo.Create(psData);
         }
 
@@ -24,7 +42,7 @@ namespace budget.Services
             PaycheckSettings ps = _psRepo.GetByAccountId(accountId);
             if (ps == null)
             {
-                throw new Exception ("No settings by that account id");
+                throw new Exception("No settings by that account id");
             }
             return ps;
         }
@@ -40,13 +58,14 @@ namespace budget.Services
             original.taxPercent = psData.taxPercent != default ? psData.taxPercent : original.taxPercent;
             original.tithePercent = psData.tithePercent != default ? psData.tithePercent : original.tithePercent;
 
+            original = ConvertWholeNumberToDecimal(original);
             return _psRepo.Update(original);
         }
 
         internal string Delete(int id, Account account)
         {
             PaycheckSettings original = GetByAccountId(account.Id);
-            if(original.AccountId != account.Id)
+            if (original.AccountId != account.Id)
             {
                 throw new Exception("Cannot delete, you are not the owner");
             }

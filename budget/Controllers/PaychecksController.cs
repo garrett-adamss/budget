@@ -7,40 +7,14 @@ namespace budget.Controllers
         private readonly PaychecksService _paychecksService;
         private readonly Auth0Provider _auth0Provider;
 
-        public PaychecksController(PaychecksService paychecksService)
+        public PaychecksController(PaychecksService paychecksService, Auth0Provider auth0Provider)
         {
             _paychecksService = paychecksService;
+            
+            _auth0Provider = auth0Provider;
         }
 
         //Functions start here
-        // public Paycheck CalculatePaycheck(Paycheck paycheck)
-        // {
-        //     // Calculate taxes
-        //     decimal taxPercent = paycheck.Account.TaxPercent / 100;
-        //     decimal taxAmount = paycheck.GrossIncome * taxPercent;
-        //     paycheck.TaxAmount = Math.Round(taxAmount, 2);
-
-        //     // Calculate net income
-        //     decimal netIncome = paycheck.GrossIncome - paycheck.TaxAmount;
-        //     paycheck.NetIncome = Math.Round(netIncome, 2);
-
-        //     // Calculate tithe
-        //     decimal tithePercent = 0.1M;
-        //     decimal titheAmount = paycheck.NetIncome * tithePercent;
-        //     paycheck.Tithe = Math.Round(titheAmount, 2);
-
-        //     // Calculate savings
-        //     decimal savingsPercent = paycheck.Account.savingsPercent / 100;
-        //     decimal savingsAmount = paycheck.NetIncome * savingsPercent;
-        //     paycheck.Savings = Math.Round(savingsAmount, 2);
-
-        //     // Calculate remaining income
-        //     decimal remainingIncome = paycheck.NetIncome - paycheck.Tithe - paycheck.Savings;
-        //     paycheck.remainingIncome = Math.Round(remainingIncome, 2);
-
-        //     return paycheck;
-        // }
-
         [HttpPost]
         [Authorize]
         public async Task<ActionResult<Paycheck>> Create([FromBody] Paycheck paycheckData)
@@ -51,6 +25,7 @@ namespace budget.Controllers
                 paycheckData.AccountId = user.Id;
                 Paycheck paycheck = _paychecksService.Create(paycheckData, user);
                 paycheck.Account = user;
+                
                 return Ok(paycheck);
             }
             catch (Exception e)
@@ -60,16 +35,65 @@ namespace budget.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Paycheck>> GetAll()
+        public async Task<ActionResult<List<Paycheck>>> GetAllByAccountId()
         {
             try
             {
-                List<Paycheck> paychecks = _paychecksService.GetAll();
+                Account user = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+                List<Paycheck> paychecks = _paychecksService.GetAllByAccountId(user);
                 return Ok(paychecks);
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Paycheck>> GetOne (int id)
+        {
+            try 
+            {
+                Account user = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+                Paycheck paycheck = _paychecksService.GetOne(id, user?.Id);
+                return Ok(paycheck);
+            }
+            catch (Exception e)
+            {
+               return BadRequest(e.Message);
+            }
+        }
+        
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<ActionResult<Paycheck>> Update(int id, [FromBody] Paycheck PaycheckData)
+        {
+            try 
+            {
+                Account user = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+                PaycheckData.Id = id;
+                Paycheck Paycheck = _paychecksService.Update(PaycheckData, user);
+                return Ok(Paycheck);
+            }
+            catch (Exception e)
+            {
+               return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<ActionResult<string>> Delete(int id)
+        {
+            try 
+            {
+                Account user = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+                string message = _paychecksService.Delete(id, user);
+                return Ok(message);
+            }
+            catch (Exception e)
+            {
+               return BadRequest(e.Message);
             }
         }
     }
