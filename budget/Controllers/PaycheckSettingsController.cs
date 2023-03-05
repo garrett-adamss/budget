@@ -32,21 +32,6 @@ namespace budget.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<PaycheckSettings>> GetOne(int id)
-        {
-            try 
-            {
-                Account account = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-                PaycheckSettings ps = _psService.GetOne(id, account.Id);
-                return Ok(ps);
-            }
-            catch (Exception e)
-            {
-               return BadRequest(e.Message);
-            }
-        }
-
-        [HttpGet("{id}")]
         public async Task<ActionResult<PaycheckSettings>> GetByAccountId(string accountId)
         {
             try 
@@ -60,6 +45,7 @@ namespace budget.Controllers
                return BadRequest(e.Message);
             }
         }
+
         [HttpPut("{id}")]
         [Authorize]
         public async Task<ActionResult<PaycheckSettings>> Update(int id, [FromBody] PaycheckSettings psData)
@@ -70,6 +56,22 @@ namespace budget.Controllers
                 psData.Id = id;
                 PaycheckSettings ps = _psService.Update(psData, account);
                 return Ok(ps); 
+            }
+            catch (Exception e)
+            {
+               return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<ActionResult<string>> Delete(int id)
+        {
+            try 
+            {
+                Account account = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+                string message = _psService.Delete(id, account);
+                return Ok(message);
             }
             catch (Exception e)
             {

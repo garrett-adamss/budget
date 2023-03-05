@@ -11,12 +11,12 @@ namespace budget.Services
         
         internal PaycheckSettings Create (PaycheckSettings psData, Account account)
         {
+            PaycheckSettings ps = _psRepo.GetByAccountId(account.Id);
+            if (ps != null)
+            {
+                throw new Exception("you can't create more than one set of settings");
+            }
             return _psRepo.Create(psData);
-        }
-
-        internal PaycheckSettings GetOne(int id1, object id2)
-        {
-            throw new NotImplementedException();
         }
 
         internal PaycheckSettings GetByAccountId(string accountId)
@@ -24,19 +24,35 @@ namespace budget.Services
             PaycheckSettings ps = _psRepo.GetByAccountId(accountId);
             if (ps == null)
             {
-                throw new Exception ("No PaycheckSettings by that account Id");
+                throw new Exception ("No settings by that account id");
             }
             return ps;
         }
 
         internal PaycheckSettings Update(PaycheckSettings psData, Account account)
         {
-            throw new NotImplementedException();
+            PaycheckSettings original = GetByAccountId(account.Id);
+            if (original.AccountId != account.Id)
+            {
+                throw new Exception("You are not the creator of these settings");
+            }
+            original.savingsPercent = psData.savingsPercent != default ? psData.savingsPercent : original.savingsPercent;
+            original.taxPercent = psData.taxPercent != default ? psData.taxPercent : original.taxPercent;
+            original.tithePercent = psData.tithePercent != default ? psData.tithePercent : original.tithePercent;
+
+            return _psRepo.Update(original);
         }
-        // internal PaycheckSettings Update(PaycheckSettings newData, Account account)
-        // {
-        //     PaycheckSettings original = GetByAccountId(newData.Account)
-        // }
+
+        internal string Delete(int id, Account account)
+        {
+            PaycheckSettings original = GetByAccountId(account.Id);
+            if(original.AccountId != account.Id)
+            {
+                throw new Exception("Cannot delete, you are not the owner");
+            }
+            _psRepo.Delete(id);
+            return "settings have been deleted";
+        }
 
     }
 }
