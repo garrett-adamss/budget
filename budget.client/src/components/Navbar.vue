@@ -1,9 +1,7 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+  <nav class="navbar navbar-expand-lg navbar-dark nav-color px-3">
     <router-link class="navbar-brand d-flex" :to="{ name: 'Home' }">
-      <div class="d-flex flex-column align-items-center">
-        <img alt="logo" src="../assets/img/cw-logo.png" height="45" />
-      </div>
+      <!-- to home  -->
     </router-link>
     <button
       class="navbar-toggler"
@@ -19,8 +17,8 @@
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav me-auto">
         <li>
-          <router-link :to="{ name: 'About' }" class="btn text-success lighten-30 selectable text-uppercase">
-            About
+          <router-link :to="{ name: 'Calendar' }" class="btn text-light lighten-30 selectable text-uppercase">
+            Calendar
           </router-link>
         </li>
       </ul>
@@ -50,9 +48,13 @@ a:hover {
 }
 
 .navbar-nav .router-link-exact-active {
-  border-bottom: 2px solid var(--bs-success);
+  border-bottom: 2px solid var(whitesmoke);
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+}
+
+.nav-color{
+  background-color: #2eaf7e7b;
 }
 
 @media screen and (min-width: 768px) {
