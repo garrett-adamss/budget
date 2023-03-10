@@ -1,13 +1,38 @@
 <template>
   <div class="">
-    
-  </div>
+    <Paycheck/>
+    <div class="" v-for="p in keeps" :key="p.id">
+      <Paycheck :paycheck="p"/>
+    </div>
+  </div>s
 </template>
 
 <script>
+import { AppState } from '../AppState'
+import Paycheck from '../components/Paycheck.vue'
+import { logger } from '../utils/Logger'
+import { paychecksService } from '../services/PaychecksService';
+import Pop from '../utils/Pop'
+import { computed, onMounted } from 'vue';
 export default {
+  components: { Paycheck },
   setup() {
-    return {}
+    async function getPaychecks(){
+      try {
+         logger.log(AppState.paycheck)
+         await paychecksService.getPaychecksByProfileId()
+      }
+      catch (error) {
+         logger.error(error)
+         Pop.toast(error.message, 'error')
+      }
+    }
+    onMounted(()=> {
+      getPaychecks();
+    })
+    return {
+      paychecks: computed(()=> AppState.paychecks)
+    }
   }
 }
 </script>

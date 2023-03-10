@@ -55,6 +55,9 @@
       "titleBar.inactiveBackground": "#0b34f599",
       "titleBar.inactiveForeground": "#e7e7e799"
     },
-    "peacock.color": "#0b34f5"
+    "peacock.color": "#0b34f5",
+    "cSpell.words": [
+      "appstate"
+    ]
   }
 }
