@@ -19,7 +19,7 @@ export default {
   setup() {
     async function getPaychecks(){
       try {
-         logger.log(AppState.paycheck)
+         logger.log(AppState.paychecks)
          await paychecksService.getPaychecksByProfileId()
       }
       catch (error) {
