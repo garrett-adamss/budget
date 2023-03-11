@@ -23,7 +23,7 @@ FOREIGN KEY (creatorId) REFERENCES accounts(id)
 
 DROP TABLE paycheck;
 
-CREATE TABLE paycheck (
+CREATE TABLE IF NOT EXISTS paycheck (
     id int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'Primary Key',
     accountId VARCHAR(255) NOT NULL COMMENT 'accountId',
     create_time DATETIME COMMENT 'Create Time',
@@ -37,3 +37,5 @@ CREATE TABLE paycheck (
     payPeriodEndDate DATE NOT NULL COMMENT 'Pay Period End Date'
 
 );
+
+show DATABASES
