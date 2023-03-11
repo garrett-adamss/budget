@@ -40,7 +40,7 @@ namespace budget.Repositories
             {
                 paycheck.Account = account;
                 return paycheck;
-            }).ToList();
+            }, new { userId }).ToList();
         }
 
         internal Paycheck GetOne(object id)

@@ -17,21 +17,21 @@ import { computed, onMounted } from 'vue';
 export default {
   components: { Paycheck },
   setup() {
-    // async function getPaychecks(){
-    //   try {
-    //      logger.log(AppState.paychecks)
-    //      await paychecksService.getPaychecksByProfileId()
-    //   }
-    //   catch (error) {
-    //      logger.error(error)
-    //      Pop.toast(error.message, 'error')
-    //   }
-    // }
-    // onMounted(()=> {
-    //   getPaychecks();
-    // })
+    async function getPaychecks(){
+      try {
+         logger.log(AppState.paychecks)
+         await paychecksService.getPaychecksByProfileId()
+      }
+      catch (error) {
+         logger.error(error)
+         Pop.toast(error.message, 'error')
+      }
+    }
+    onMounted(()=> {
+      getPaychecks();
+    })
     return {
-      // paychecks: computed(()=> AppState.paychecks)
+      paychecks: computed(()=> AppState.paychecks)
     }
   }
 }
