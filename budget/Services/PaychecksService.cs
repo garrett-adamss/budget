@@ -18,8 +18,7 @@ namespace budget.Services
             PaycheckSettings ps = _psService.GetByAccountId(paycheck.AccountId);
 
             // Calculate taxes
-            decimal taxPercent = ps.taxPercent / 100;
-            decimal taxAmount = paycheck.GrossIncome * taxPercent;
+            decimal taxAmount = paycheck.GrossIncome * ps.taxPercent;
             paycheck.TaxAmount = Math.Round(taxAmount, 2);
 
             // Calculate net income
@@ -27,18 +26,15 @@ namespace budget.Services
             paycheck.NetIncome = Math.Round(netIncome, 2);
 
             // Calculate tithe
-            decimal tithePercent = ps.tithePercent / 100;
-            decimal titheAmount = paycheck.NetIncome * tithePercent;
+            decimal titheAmount = paycheck.NetIncome * ps.tithePercent;
             paycheck.Tithe = Math.Round(titheAmount, 2);
 
             // Calculate savings
-            decimal savingsPercent = ps.savingsPercent / 100;
-            decimal savingsAmount = paycheck.NetIncome * savingsPercent;
+            decimal savingsAmount = paycheck.NetIncome * ps.savingsPercent;
             paycheck.Savings = Math.Round(savingsAmount, 2);
 
             // Calculate investments
-            decimal investmentsPercent = ps.investmentsPercent / 100;
-            decimal investmentsAmount = paycheck.NetIncome * investmentsPercent;
+            decimal investmentsAmount = paycheck.NetIncome * ps.investmentsPercent;
             paycheck.Investments = Math.Round(investmentsAmount, 2);
 
             // Calculate remaining income

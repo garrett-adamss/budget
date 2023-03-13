@@ -52,6 +52,7 @@ import { paychecksService } from '../services/PaychecksService'
 import { logger } from '../utils/Logger'
 import Pop from '../utils/Pop'
 import { AppState } from '../AppState'
+import { Modal } from 'bootstrap'
 export default {
   setup() {
     const route = useRoute()
@@ -71,8 +72,10 @@ export default {
         //     throw new Error("You can only create keeps on your vault");
         //   }
           logger.log("editable.value", editable.value)
-          editable.value.creatorId = route.params.id
+          editable.value.accountId = route.params.id
           await paychecksService.createPaycheck(editable.value)
+          Modal.getOrCreateInstance("#paycheckCreate").hide()
+          Pop.success("Paycheck logged!")
         }
         catch (error) {
           logger.error(error)

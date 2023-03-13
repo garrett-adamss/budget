@@ -13,11 +13,11 @@
           </tr>
         </thead>
         <tbody>
-          <!-- <template v-for="p in appstate.paychecks">
+          <template v-for="p in appstate.paychecks">
             <div :key="p.id" v-if="p">
               <Paycheck :paycheck="p" />
             </div>
-          </template> -->
+          </template>
           <paycheck/>
         </tbody>
       </table>
@@ -27,14 +27,12 @@
   <script>
   import { computed } from '@vue/reactivity';
   import { AppState } from '../AppState'
-import Paycheck from '../components/Paycheck.vue';
-//   import Paycheck from '@/components/Paycheck.vue';
+  import Paycheck from '../components/Paycheck.vue'
+import { logger } from '../utils/Logger';
+import Pop from '../utils/Pop';
   
   export default {
-    components: {
-        Paycheck
-    //   Paycheck,
-    },
+    components: { Paycheck },
     data() {
       return {
         columns: ['paycheckDate', 'payPeriodStartDate', 'payPeriodEndDate', 'grossIncome', 'taxes', 'netIncome', 'savings', 'tithe', 'investment'],
@@ -50,11 +48,19 @@ import Paycheck from '../components/Paycheck.vue';
       },
     },
     mounted() {
-    //   this.getPaycheck();
+      this.getPaycheck();
     },
     methods: {
-      getPaycheck() {
-        // Your code to get paycheck data goes here
+      async getPaycheck() {
+        try {
+        logger.log("[account]", AppState.account)
+        logger.log(AppState.paychecks)
+        await paychecksService.getPaychecksByProfileId()
+      }
+      catch (error) {
+        logger.error(error)
+        Pop.toast(error.message, 'error')
+      }
       },
     },
   };

@@ -2,7 +2,7 @@
     <!-- Modal -->
     <div
       class="modal fade"
-      id="paycheckCreate"
+      id="psCreate"
       tabindex="-1"
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
@@ -10,7 +10,7 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Add Paycheck</h1>
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Create Paycheck Settings</h1>
             <button
               type="button"
               class="btn-close"
@@ -22,16 +22,16 @@
             <div class="mb-3">
               <form>
                 <label for="" class="form-label">Tax Percent</label>
-                <input v-model="editable.grossIncome" type="number" class="form-control" name="" id="" aria-describedby="helpId" placeholder="$ 0.00" min="1.00" step="0.01" />
+                <input v-model="editable.taxPercent" type="number" class="form-control" name="" id="" aria-describedby="helpId" placeholder="% " min="1.00" step="0.01" max="100"/>
   
                 <label for="" class="form-label">Savings Percent</label>
-                <input v-model="editable.payPeriodStartDate" type="date" class="form-control" name="" id="" aria-describedby="helpId" placeholder="" />
+                <input v-model="editable.savingsPercent" type="number" class="form-control" name="" id="" aria-describedby="helpId" placeholder="% " max="100"/>
   
                 <label for="" class="form-label">Tithe Percent</label>
-                <input v-model="editable.payPeriodEndDate" type="date" class="form-control" name="" id="" aria-describedby="helpId" placeholder="$xxxx.xx" />
+                <input v-model="editable.tithePercent" type="number" class="form-control" name="" id="" aria-describedby="helpId" placeholder="% " max="100"/>
   
                 <label for="" class="form-label">Investments Percent</label>
-                <input v-model="editable.paycheckDate" type="date" class="form-control" name="" id="" aria-describedby="helpId" placeholder="$xxxx.xx" />
+                <input v-model="editable.investmentsPercent" type="number" class="form-control" name="" id="" aria-describedby="helpId" placeholder="% " max="100"/>
   
                 <button type="submit" class="btn btn-primary">
                   Create Paycheck Settings
@@ -48,10 +48,11 @@
   <script>
   import { computed, ref } from 'vue'
   import { useRoute } from 'vue-router'
-  import { paychecksService } from '../services/PaychecksService'
+  import { psService } from '../services/PsService'
   import { logger } from '../utils/Logger'
   import Pop from '../utils/Pop'
   import { AppState } from '../AppState'
+import { Modal } from 'bootstrap'
   export default {
     setup() {
       const route = useRoute()
@@ -71,8 +72,10 @@
           //     throw new Error("You can only create keeps on your vault");
           //   }
             logger.log("editable.value", editable.value)
-            editable.value.creatorId = route.params.id
-            await paychecksService.createPaycheck(editable.value)
+            editable.value.accountId = route.params.id
+            await psService.createPaycheckSettings(editable.value)
+            Modal.getOrCreateInstance("#psModal").hide()
+            Pop.success("Paycheck settings set!")
           }
           catch (error) {
             logger.error(error)

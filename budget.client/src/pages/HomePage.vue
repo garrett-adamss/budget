@@ -3,11 +3,15 @@
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#paycheckCreate">
       paycheck +
     </button>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#psCreate">
+      paycheck settings +
+    </button>
     <!-- <Paycheck /> -->
-    <div class="" v-for="p in keeps" :key="p.id">
+    <div class="" v-for="p in paychecks" :key="p.id">
       <Paycheck :paycheck="p" />
     </div>
     <PaycheckCreateModal />
+    <PsCreateModal />
   </div>
 </template>
 
@@ -19,6 +23,7 @@ import { paychecksService } from '../services/PaychecksService';
 import Pop from '../utils/Pop'
 import { computed, onMounted } from 'vue';
 import PaycheckCreateModal from '../components/PaycheckCreateModal.vue';
+
 export default {
   components: { Paycheck, PaycheckCreateModal },
   setup() {

@@ -16,7 +16,6 @@ namespace budget.Repositories
             (accountId, taxPercent, savingsPercent, tithePercent, investmentsPercent)
             VALUES
             (@accountId, @taxPercent, @savingsPercent, @tithePercent, @investmentsPercent)
-            SELECT LAST_INSERT_ID();
             ";
             int id = _db.ExecuteScalar<int>(sql, paycheckSettingData);
             paycheckSettingData.Id = id;

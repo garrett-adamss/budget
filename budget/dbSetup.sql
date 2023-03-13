@@ -21,7 +21,6 @@ kept VARCHAR(255) NOT NULL DEFAULT 0,
 FOREIGN KEY (creatorId) REFERENCES accounts(id)
 ) default charset utf8 COMMENT '';
 
-DROP TABLE paycheck;
 
 CREATE TABLE IF NOT EXISTS paycheck (
     id int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'Primary Key',
@@ -30,7 +29,7 @@ CREATE TABLE IF NOT EXISTS paycheck (
     paycheckDate DATE NOT NULL COMMENT 'Paycheck Date',
     grossIncome DECIMAL(18,2) NOT NULL COMMENT 'Gross Income',
     taxAmount DECIMAL(18,2) NOT NULL COMMENT 'Tax Amount',
-    netAmount DECIMAL(18,2) NOT NULL COMMENT 'Net Amount',
+    netIncome DECIMAL(18,2) NOT NULL COMMENT 'Net Amount',
     savings DECIMAL(18,2) NOT NULL COMMENT 'Savings',
     tithe DECIMAL(18,2) NOT NULL COMMENT 'Tithe',
     payPeriodStartDate DATE NOT NULL COMMENT 'Pay Period Start Date',
@@ -38,13 +37,5 @@ CREATE TABLE IF NOT EXISTS paycheck (
 
 );
 
-ALTER TABLE paycheck 
-ADD COLUMN investments DECIMAL (18,2);
-
 DESCRIBE paycheck_settings;
 DESCRIBE paycheck;
-
-
-
-ALTER TABLE paycheck_settings
-ADD COLUMN investmentsPercent DECIMAL (5,2);

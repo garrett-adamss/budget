@@ -7,5 +7,7 @@ export const AppState = reactive({
   account: {},
 
   paychecks: {},
-  activePaycheck: null
+  activePaycheck: null,
+
+  paycheckSettings: {},
 })

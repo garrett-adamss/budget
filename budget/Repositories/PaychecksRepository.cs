@@ -15,10 +15,10 @@ namespace budget.Repositories
         {
             string sql=@"
             INSERT INTO paycheck
-            (accountId, paycheckDate, grossIncome, taxAmount, netAmount, savings, tithe, payPeriodStartDate, payPeriodEndDate, remainingIncome, details, investments)
+            (accountId, paycheckDate, grossIncome, taxAmount, netIncome, savings, tithe, payPeriodStartDate, payPeriodEndDate, remainingIncome, details, investments)
             VALUES
-            (@accountId, @paycheckDate, @grossIncome, @taxAmount, @netAmount, @savings, @tithe, @payPeriodStartDate, @payPeriodEndDate, @remainingIncome, @details, @investments)
-            LAST_INSERT_ID();
+            (@accountId, @paycheckDate, @grossIncome, @taxAmount, @netIncome, @savings, @tithe, @payPeriodStartDate, @payPeriodEndDate, @remainingIncome, @details, @investments);
+            SELECT LAST_INSERT_ID();
             ";
             int id = _db.ExecuteScalar<int>(sql, paycheckData);
             paycheckData.Id = id;
@@ -67,7 +67,7 @@ namespace budget.Repositories
             paycheckDate = @paycheckDate,
             grossIncome = @grossIncome,
             taxAmount = @taxAmount,
-            netAmount = @netAmount,
+            netIncome = @netIncome,
             savings = @savings,
             tithe = @tithe,
             payPeriodStartDate = @payPeriodStartDate,
