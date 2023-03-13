@@ -47,7 +47,12 @@
 <script>
 import Paycheck from '../components/Paycheck.vue'
 export default {
-  components: { Paycheck },
+    props: {
+      paycheck: {
+         type: Object,
+         required: true
+      }
+   },
   setup() {
     return {
 
