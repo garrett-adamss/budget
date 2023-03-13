@@ -13,6 +13,12 @@ const routes = [
     beforeEnter: authGuard
   },
   {
+    path: '/tester',
+    name: 'Tester',
+    component: loadPage('TesterPage'),
+    beforeEnter: authGuard
+  },
+  {
     path: '/calendar',
     name: 'Calendar',
     component: loadPage('CalendarPage')

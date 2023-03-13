@@ -8,5 +8,6 @@ namespace budget.Repositories
         public decimal taxPercent { get; set;}
         public decimal savingsPercent { get; set;}
         public decimal tithePercent { get; set;}
+        public decimal investmentsPercent { get; set;}
     }
 }

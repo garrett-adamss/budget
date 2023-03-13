@@ -18,8 +18,8 @@ class PaychecksService {
         logger.log('Deleting Keep')
         AppState.paychecks = AppState.paychecks.filter(p => p.id != id)
     }
-    async createKeep(keepData){
-        const res = await api.post('api/paychecks', keepData)
+    async createPaycheck(paycheckData){
+        const res = await api.post('api/paychecks', paycheckData)
         logger.log("[res.data]", res.data)
         AppState.paychecks.push(res.data)
     }

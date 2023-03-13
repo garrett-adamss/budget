@@ -36,8 +36,13 @@ namespace budget.Services
             decimal savingsAmount = paycheck.NetIncome * savingsPercent;
             paycheck.Savings = Math.Round(savingsAmount, 2);
 
+            // Calculate investments
+            decimal investmentsPercent = ps.investmentsPercent / 100;
+            decimal investmentsAmount = paycheck.NetIncome * investmentsPercent;
+            paycheck.Investments = Math.Round(investmentsAmount, 2);
+
             // Calculate remaining income
-            decimal remainingIncome = paycheck.NetIncome - paycheck.Tithe - paycheck.Savings;
+            decimal remainingIncome = paycheck.NetIncome - paycheck.Tithe - paycheck.Savings - paycheck.Investments;
             paycheck.RemainingIncome = Math.Round(remainingIncome, 2);
 
             return paycheck;

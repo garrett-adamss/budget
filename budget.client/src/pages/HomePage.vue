@@ -1,10 +1,14 @@
 <template>
   <div class="">
-    <Paycheck/>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#paycheckCreate">
+      paycheck +
+    </button>
+    <!-- <Paycheck /> -->
     <div class="" v-for="p in keeps" :key="p.id">
-      <Paycheck :paycheck="p"/>
+      <Paycheck :paycheck="p" />
     </div>
-  </div>s
+    <PaycheckCreateModal />
+  </div>
 </template>
 
 <script>
@@ -14,24 +18,36 @@ import { logger } from '../utils/Logger'
 import { paychecksService } from '../services/PaychecksService';
 import Pop from '../utils/Pop'
 import { computed, onMounted } from 'vue';
+import PaycheckCreateModal from '../components/PaycheckCreateModal.vue';
 export default {
-  components: { Paycheck },
+  components: { Paycheck, PaycheckCreateModal },
   setup() {
-    async function getPaychecks(){
+    async function getPaychecks() {
       try {
-         logger.log(AppState.paychecks)
-         await paychecksService.getPaychecksByProfileId()
+        logger.log("[account]", AppState.account)
+        logger.log(AppState.paychecks)
+        await paychecksService.getPaychecksByProfileId()
       }
       catch (error) {
-         logger.error(error)
-         Pop.toast(error.message, 'error')
+        logger.error(error)
+        Pop.toast(error.message, 'error')
       }
     }
-    onMounted(()=> {
+    onMounted(() => {
       getPaychecks();
     })
     return {
-      paychecks: computed(()=> AppState.paychecks)
+      paychecks: computed(() => AppState.paychecks),
+      // async setActive() {
+      //   try {
+      //     Modal.getOrCreateInstance(document.getElementById("paycheckCreate")).toggle();
+      //     await keepsService.getOne(props.paycheck.id);
+      //   }
+      //   catch (error) {
+      //     logger.error(error);
+      //     Pop.toast(error.message, "error");
+      //   }
+      // }
     }
   }
 }
@@ -48,7 +64,7 @@ export default {
   .home-card {
     width: 50vw;
 
-    >img {
+    > img {
       height: 200px;
       max-width: 200px;
       width: 100%;

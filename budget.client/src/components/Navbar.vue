@@ -1,7 +1,10 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark nav-color px-3">
     <router-link class="navbar-brand d-flex" :to="{ name: 'Home' }">
-      <!-- to home  -->
+      <!-- to home  --> HOME
+    </router-link>
+    <router-link class="navbar-brand d-flex" :to="{ name: 'Tester' }">
+      TEST
     </router-link>
     <button
       class="navbar-toggler"

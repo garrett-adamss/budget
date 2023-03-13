@@ -13,9 +13,9 @@ namespace budget.Repositories
         {
             string sql = @"
             INSERT INTO paycheck_settings
-            (accountId, taxPercent, savingsPercent, tithePercent)
+            (accountId, taxPercent, savingsPercent, tithePercent, investmentsPercent)
             VALUES
-            (@accountId, @taxPercent, @savingsPercent, @tithePercent)
+            (@accountId, @taxPercent, @savingsPercent, @tithePercent, @investmentsPercent)
             SELECT LAST_INSERT_ID();
             ";
             int id = _db.ExecuteScalar<int>(sql, paycheckSettingData);
@@ -27,15 +27,16 @@ namespace budget.Repositories
             string sql= @"
             SELECT
             ps.*,
+            a.*
             FROM paycheck_settings ps
-            JOIN account a ON ps.accountId = a.id
+            JOIN accounts a ON ps.accountId = a.id
             WHERE a.id = @accountId
             ";
             return _db.Query<PaycheckSettings, Account, PaycheckSettings>(sql, (paycheckSetting, profile)=>
             {
                 paycheckSetting.Account = profile;
                 return paycheckSetting;
-            }, new { accountId }).FirstOrDefault();
+            }, new { accountId }, splitOn: "id").FirstOrDefault();
         }
 
         internal PaycheckSettings Update(PaycheckSettings newData)
@@ -45,7 +46,8 @@ namespace budget.Repositories
             accountId = @accountId,
             taxPercent = @taxPercent,
             savingsPercent = @savingsPercent,
-            tithePercent = @tithePercent
+            tithePercent = @tithePercent,
+            investmentsPercent = @investmentsPercent
             WHERE id = @id;
             ";
             _db.Execute(sql, newData);

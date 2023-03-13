@@ -23,6 +23,10 @@ namespace budget.Services
             decimal savingsPercentDecimal = psData.savingsPercent / 100m;
             psData.savingsPercent = savingsPercentDecimal;
 
+            //Convert incomePercent to decimal 
+            decimal investmentsPercentDecimal = psData.investmentsPercent / 100m;
+            psData.investmentsPercent = investmentsPercentDecimal;
+
             return (psData);
         }
         

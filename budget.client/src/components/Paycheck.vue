@@ -1,14 +1,14 @@
 <template>
- <div>
-    paycheck comp.
- </div>
+     <table>
+
+  </table>
 </template>
  
 <script>
 export default {
    setup(){
       return {
- 
+
       }
    }
 }

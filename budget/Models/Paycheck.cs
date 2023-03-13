@@ -13,6 +13,7 @@ public class Paycheck
     public decimal NetIncome { get; set; }
     public decimal Savings { get; set; }
     public decimal Tithe { get; set; }
+    public decimal Investments { get; set; }
     public decimal RemainingIncome { get; set;}
     public string Details { get; set; }
 }

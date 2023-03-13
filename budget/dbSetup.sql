@@ -38,4 +38,13 @@ CREATE TABLE IF NOT EXISTS paycheck (
 
 );
 
-show DATABASES
+ALTER TABLE paycheck 
+ADD COLUMN investments DECIMAL (18,2);
+
+DESCRIBE paycheck_settings;
+DESCRIBE paycheck;
+
+
+
+ALTER TABLE paycheck_settings
+ADD COLUMN investmentsPercent DECIMAL (5,2);
