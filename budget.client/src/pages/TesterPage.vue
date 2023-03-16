@@ -1,79 +1,166 @@
 <template>
-    <div>
-      <div class="columns-filter">
-        <div v-for="(column, index) in columns" :key="index">
-          <input type="checkbox" :id="column" v-model="selectedColumns" :value="column">
-          <label :for="column">{{ column }}</label>
+  <div class="container-fluid p-4">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-10">
+        <div class="d-flex flex-column align-items-center">
+          <div class="d-flex justify-content-between w-100 mb-3">
+            <label v-for="column in columns" :key="column" class="toggle-label">
+              <input type="checkbox" v-model="visibleColumns" :value="column" class="toggle-input">
+              <span class="toggle-button"></span>
+              <span class="toggle-text">{{ column }}</span>
+            </label>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+              <thead class="thead-dark">
+                <tr>
+                  <th v-for="(column, index) in filteredColumns" :key="index">{{ column }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="paycheck in filteredPaychecks" :key="paycheck.id">
+                  <td v-if="visibleColumns.includes('Pay Period')">{{ paycheck.payPeriod }}</td>
+                  <td v-if="visibleColumns.includes('Payed On')">{{ paycheck.paycheckDate }}</td>
+                  <td v-if="visibleColumns.includes('Gross Income')">${{ paycheck.grossIncome }}</td>
+                  <td v-if="visibleColumns.includes('Net Income')">${{ paycheck.netIncome }}</td>
+                  <td v-if="visibleColumns.includes('Taxes')">${{ paycheck.taxAmount }}</td>
+                  <td v-if="visibleColumns.includes('Savings')">${{ paycheck.savings }}</td>
+                  <td v-if="visibleColumns.includes('Tithe')">${{ paycheck.tithe }}</td>
+                  <td v-if="visibleColumns.includes('Investments')">${{ paycheck.investments }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th v-for="(column, index) in selectedColumns" :key="index">{{ column }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="p in appstate.paychecks">
-            <div :key="p.id" v-if="p">
-              <Paycheck :paycheck="p" />
-            </div>
-          </template>
-          <paycheck/>
-        </tbody>
-      </table>
     </div>
-  </template>
-  
-  <script>
-  import { computed } from '@vue/reactivity';
-  import { AppState } from '../AppState'
-  import Paycheck from '../components/Paycheck.vue'
-import { logger } from '../utils/Logger';
-import Pop from '../utils/Pop';
-  
-  export default {
-    components: { Paycheck },
-    data() {
-      return {
-        columns: ['paycheckDate', 'payPeriodStartDate', 'payPeriodEndDate', 'grossIncome', 'taxes', 'netIncome', 'savings', 'tithe', 'investment'],
-        selectedColumns: ['paycheckDate', 'grossIncome', 'netIncome'],
-      };
-    },
-    computed: {
-        paychecks: computed(() => AppState.paychecks),
-      filteredColumns() {
-        return this.columns.filter(column => {
-          return this.selectedColumns.includes(column);
-        });
-      },
-    },
-    mounted() {
-      this.getPaycheck();
-    },
-    methods: {
-      async getPaycheck() {
-        try {
-        logger.log("[account]", AppState.account)
-        logger.log(AppState.paychecks)
-        await paychecksService.getPaychecksByProfileId()
+  </div>
+</template>
+
+
+<script>
+import { onMounted, computed, ref } from 'vue';
+import { paychecksService } from '../services/PaychecksService';
+import { logger } from '../utils/Logger'
+import Pop from '../utils/Pop'
+import { AppState } from '../AppState';
+
+export default {
+  name: 'PaychecksPage',
+
+  setup() {
+    const columns = ['Pay Period', 'Payed On', 'Gross Income', 'Net Income', 'Taxes', 'Savings', 'Tithe', 'Investments'];
+
+    const visibleColumns = ref(columns);
+
+    function formatDate(dateString) {
+    const date = new Date(dateString);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear().toString().slice(-2);
+    return `${month < 10 ? '0' : ''}${month}/${day < 10 ? '0' : ''}${day}/${year}`;
+    }
+
+    const filteredColumns = computed(() => {
+      return columns.filter(column => visibleColumns.value.includes(column));
+    });
+
+    const filteredPaychecks = computed(() => {
+      return AppState.paychecks.map((paycheck) => {
+       return {
+          id: paycheck.id,
+          payPeriod: `${formatDate(paycheck.payPeriodStartDate)} - ${formatDate(paycheck.payPeriodEndDate)}`,
+          paycheckDate: formatDate(paycheck.paycheckDate),
+          grossIncome: paycheck.grossIncome,
+          netIncome: paycheck.netIncome,
+          taxAmount: paycheck.taxAmount,
+          savings: paycheck.savings,
+          tithe: paycheck.tithe,
+          investments: paycheck.investments,
+        };
+      });
+    });
+
+    async function getPaychecks() {
+      try {
+        logger.log(AppState.paychecks);
+        await paychecksService.getPaychecksByProfileId();
+      } catch (error) {
+        logger.error(error);
+        Pop.toast(error.message, 'error');
       }
-      catch (error) {
-        logger.error(error)
-        Pop.toast(error.message, 'error')
-      }
-      },
-    },
-  };
-  </script>
-    
-  <style scoped>
-  .columns-filter {
+    }
+
+    onMounted(() => {
+      getPaychecks();
+    });
+
+    return {
+      columns,
+      visibleColumns,
+      filteredPaychecks,
+      filteredColumns,
+    };
+  },
+};
+</script>
+
+<style scoped>
+  .toggle-label {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
   }
-  .columns-filter label {
-    margin-left: 0.25rem;
+
+  .toggle-input {
+    display: none;
   }
-  </style>
-  
+
+  .toggle-button {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    background-color: #ddd;
+    margin-right: 0.5rem;
+    position: relative;
+  }
+
+  .toggle-input:checked + .toggle-button {
+    background-color: #1abc9c;
+  }
+
+  .toggle-text {
+    font-weight: bold;
+  }
+
+  .table {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    width: 75vw; /* increase the width of the table */
+  }
+
+  .table thead th {
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .table tbody td {
+    text-align: center;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .container-fluid {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+
+  @media (max-width: 767.98px) {
+    .container-fluid {
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+  }
+</style>

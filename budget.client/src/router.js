@@ -21,7 +21,8 @@ const routes = [
   {
     path: '/calendar',
     name: 'Calendar',
-    component: loadPage('CalendarPage')
+    component: loadPage('CalendarPage'),
+    beforeEnter: authGuard
   },
   {
     path: '/account',

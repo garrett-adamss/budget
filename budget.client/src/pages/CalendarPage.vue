@@ -1,99 +1,149 @@
 <template>
-  <!-- <div class="row">
-    <div class="col-10 offset-1 paycheck test d-flex justify-content-between align-items-center">
-      <div class="column ps-4 pe-4">
-        <i>Dates</i>
-        <p>1/1 - 1/15</p>
-      </div>
-      <div class="column ">
-        <i>Payed On</i>
-        <p>1/14</p>
-      </div>
-      <div class="column ">
-        <i>Gross Income</i>
-        <p>$3828.34</p>
-      </div>
-      <div class="column ">
-        <i>Net Income</i>
-        <p>$2989.51</p>
-      </div>
-      <div class="column ">
-        <i>Taxes</i>
-        <p>$942.13</p>
-      </div>
-      <div class="column ">
-        <i>Savings</i>
-        <p>$295.10</p>
-      </div>
-      <div class="column ">
-        <i>Tithe</i>
-        <p>$295.10</p>
-      </div>
-      <div class="column ">
-        <i>Investments</i>
-        <p>$295.10</p>
-      </div>
-      <div class="column-end">
-        <i>Remaining Total</i>
-        <p>$295.10</p>
-      </div>
+  <div class="d-flex flex-column align-items-center mt-4">
+    <div class="column-toggles mb-3">
+      <label v-for="column in columns" :key="column" :class="{ 'selected': visibleColumns.includes(column) }">
+        <input type="checkbox" v-model="visibleColumns" :value="column">{{ column }}
+      </label>
     </div>
-  </div> -->
-  <div>
-    
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th v-for="(column, index) in filteredColumns" :key="index">{{ column }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="paycheck in filteredPaychecks" :key="paycheck.id">
+          <td v-if="visibleColumns.includes('Pay Period')">{{ paycheck.payPeriod }}</td>
+          <td v-if="visibleColumns.includes('Payed On')">{{ paycheck.paycheckDate }}</td>
+          <td v-if="visibleColumns.includes('Gross Income')">${{ paycheck.grossIncome }}</td>
+          <td v-if="visibleColumns.includes('Net Income')">${{ paycheck.netIncome }}</td>
+          <td v-if="visibleColumns.includes('Taxes')">${{ paycheck.taxAmount}}</td>
+          <td v-if="visibleColumns.includes('Savings')">${{ paycheck.savings }}</td>
+          <td v-if="visibleColumns.includes('Tithe')">${{ paycheck.tithe }}</td>
+          <td v-if="visibleColumns.includes('Investments')">${{ paycheck.investments }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <script>
-import Paycheck from '../components/Paycheck.vue'
+import { onMounted, computed, ref } from 'vue';
+import { paychecksService } from '../services/PaychecksService';
+import { logger } from '../utils/Logger'
+import Pop from '../utils/Pop'
+import { AppState } from '../AppState';
+
 export default {
-    props: {
-      paycheck: {
-         type: Object,
-         required: true
-      }
-   },
+  name: 'PaychecksPage',
+
   setup() {
-    return {
+    const columns = ['Pay Period', 'Payed On', 'Gross Income', 'Net Income', 'Taxes', 'Savings', 'Tithe', 'Investments'];
 
+    const visibleColumns = ref(columns);
+
+    function formatDate(dateString) {
+    const date = new Date(dateString);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear().toString().slice(-2);
+    return `${month < 10 ? '0' : ''}${month}/${day < 10 ? '0' : ''}${day}/${year}`;
     }
-  }
-}
-</script>
- 
-<style> 
-.test{
-  /* border: .5px solid red; */
-  border-radius: 4px;
-}
-.column{
-  /* border: .5px solid red; */
-  /* padding-top: .25em; */
-  border-right: 1.5px solid gray;
-  /* padding-left: 1vw;
-  padding-right: 1.5vw; */
-}
-.column-end{
-  /* padding-left: 1vw;
-  padding-right: 1.5vw; */
-}
-i{
 
-  /* border-bottom: 1.5px solid gray; */
+    const filteredColumns = computed(() => {
+      return columns.filter(column => visibleColumns.value.includes(column));
+    });
+
+    const filteredPaychecks = computed(() => {
+      return AppState.paychecks.map((paycheck) => {
+       return {
+          id: paycheck.id,
+          payPeriod: `${formatDate(paycheck.payPeriodStartDate)} - ${formatDate(paycheck.payPeriodEndDate)}`,
+          paycheckDate: formatDate(paycheck.paycheckDate),
+          grossIncome: paycheck.grossIncome,
+          netIncome: paycheck.netIncome,
+          taxAmount: paycheck.taxAmount,
+          savings: paycheck.savings,
+          tithe: paycheck.tithe,
+          investments: paycheck.investments,
+        };
+      });
+    });
+
+    async function getPaychecks() {
+      try {
+        logger.log(AppState.paychecks);
+        await paychecksService.getPaychecksByProfileId();
+      } catch (error) {
+        logger.error(error);
+        Pop.toast(error.message, 'error');
+      }
+    }
+
+    onMounted(() => {
+      getPaychecks();
+    });
+
+    return {
+      columns,
+      visibleColumns,
+      filteredPaychecks,
+      filteredColumns,
+    };
+  },
+};
+</script>
+
+<style scoped>
+/* .column-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
-p{
-  /* padding-top: .5em; */
-  /* margin: 0; */
+
+.column-toggles label {
+  margin-right: 10px;
+} */
+.selected {
+    color: white;
+    background-color: rgba(4, 171, 4, 0.666);
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+.column-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
-.paycheck{
-  border: 1px solid gray;
+
+.column-toggles label {
+  margin-right: 10px;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  padding: 0;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
-.row{
-  /* border: 1px solid rgb(3, 199, 3); */
-  margin-left:5vw;
-  margin-right:5vw;
-  margin-top: 8vh;
+
+.column-toggles label:hover {
+  background-color: #f2f2f2;
+}
+
+.column-toggles input[type="checkbox"] {
+  display: none;
+}
+
+.column-toggles input[type="checkbox"]:checked + label {
+  background-color: #007bff;
+  color: #fff;
+}
+
+table {
+  width: 100%;
+}
+
+th, td {
+  text-align: center;
+  vertical-align: middle !important;
 }
 </style>
