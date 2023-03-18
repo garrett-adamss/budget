@@ -25,7 +25,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="paycheck in filteredPaychecks" :key="paycheck.id">
+                <tr  v-for="paycheck in filteredPaychecks" :key="paycheck.id" class="selectable" @click="toPaycheckPage(paycheck.id)">
                   <td v-if="visibleColumns.includes('Pay Period')">{{ paycheck.payPeriod }}</td>
                   <td v-if="visibleColumns.includes('Payed On')">{{ paycheck.paycheckDate }}</td>
                   <td v-if="visibleColumns.includes('Gross Income')">${{ paycheck.grossIncome }}</td>
@@ -54,6 +54,8 @@ import { paychecksService } from '../services/PaychecksService';
 import { logger } from '../utils/Logger'
 import Pop from '../utils/Pop'
 import { AppState } from '../AppState';
+import { router } from '../router';
+import { top } from '@popperjs/core';
 
 export default {
   name: 'PaychecksPage',
@@ -110,22 +112,33 @@ export default {
       visibleColumns,
       filteredPaychecks,
       filteredColumns,
+      async toPaycheckPage(id){
+        try {
+          await paychecksService.getOne(id);
+          router.push({name: 'Paycheck', params: {id}})  
+        }
+        catch (error) {
+           logger.error(error)
+           Pop.toast(error.message, 'error')
+        }
+      }
     };
   },
 };
 </script>
 
 <style scoped>
+.selectable:hover{
+  cursor: pointer;
+}
   .toggle-label {
     display: flex;
     align-items: center;
     margin-bottom: 0.5rem;
   }
-
   .toggle-input {
     display: none;
   }
-
   .toggle-button {
     width: 20px;
     height: 20px;
@@ -134,39 +147,31 @@ export default {
     margin-right: 0.5rem;
     position: relative;
   }
-
   .toggle-input:checked + .toggle-button {
     background-color: #1abc9c;
   }
-
   .toggle-text {
     font-weight: bold;
   }
-
   .table {
     margin-top: 2rem;
     margin-bottom: 2rem;
     width: 75vw; /* increase the width of the table */
   }
-
   .table thead th {
     font-weight: bold;
     text-align: center;
   }
-
   .table tbody td {
     text-align: center;
   }
-
   .table-responsive {
     overflow-x: auto;
   }
-
   .container-fluid {
     padding-left: 5%;
     padding-right: 5%;
   }
-
   @media (max-width: 767.98px) {
     .container-fluid {
       padding-left: 2%;

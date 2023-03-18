@@ -10,8 +10,8 @@ class PaychecksService {
     }
     async getOne(id){
         const res = await api.get(`api/paychecks/${id}`)
-        AppState.activeKeep = res.data
-        logger.log('[Active Keep]', AppState.activeKeep)
+        AppState.activePaycheck = res.data
+        logger.log('[Active Keep]', AppState.activePaycheck)
     }
     async deleteKeep(id){
         const res = await api.delete(`api/paychecks/${id}`)

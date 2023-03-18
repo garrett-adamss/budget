@@ -12,7 +12,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="paycheck in filteredPaychecks" :key="paycheck.id">
+        <tr v-for="paycheck in filteredPaychecks" :key="paycheck.id" @click="toPaycheckPage()" class="selectable">
           <td v-if="visibleColumns.includes('Pay Period')">{{ paycheck.payPeriod }}</td>
           <td v-if="visibleColumns.includes('Payed On')">{{ paycheck.paycheckDate }}</td>
           <td v-if="visibleColumns.includes('Gross Income')">${{ paycheck.grossIncome }}</td>
@@ -33,6 +33,7 @@ import { paychecksService } from '../services/PaychecksService';
 import { logger } from '../utils/Logger'
 import Pop from '../utils/Pop'
 import { AppState } from '../AppState';
+import { router } from '../router';
 
 export default {
   name: 'PaychecksPage',
@@ -89,21 +90,21 @@ export default {
       visibleColumns,
       filteredPaychecks,
       filteredColumns,
+      async toPaycheckPage(){
+        try {
+          router.push({name: 'PaycheckPage'})  
+        }
+        catch (error) {
+           logger.error(error)
+           Pop.toast(error.message, 'error')
+        }
+      }
     };
   },
 };
 </script>
 
 <style scoped>
-/* .column-toggles {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.column-toggles label {
-  margin-right: 10px;
-} */
 .selected {
     color: white;
     background-color: rgba(4, 171, 4, 0.666);
@@ -115,7 +116,9 @@ export default {
   flex-wrap: wrap;
   justify-content: center;
 }
-
+.selectable:hover{
+  cursor: pointer;
+}
 .column-toggles label {
   margin-right: 10px;
   padding: 5px 10px;
