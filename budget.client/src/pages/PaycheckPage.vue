@@ -1,62 +1,49 @@
 <template>
-   <div class="container">
-     <div class="row">
-       <div class="col-12 col-md-6">
-         <div class="card">
-           <div class="card-body">
-             <h5 class="card-title">Paycheck Information</h5>
-             <div class="card-text">
-               <div class="row">
-                 <div class="col-6">Payed on:</div>
-                 <div class="col-6">{{ formatDate(paycheck.paycheckDate) }}</div>
-               </div>
-               <div class="row">
-                 <div class="col-6">Pay Period:</div>
-                 <div class="col-6">{{ formatDate(paycheck.payPeriodStartDate) }} - {{formatDate(paycheck.payPeriodEndDate) }}</div>
-               </div>
-               <div class="row">
-                 <div class="col-6">Gross Income:</div>
-                 <div class="col-6">{{ paycheck.grossIncome }}</div>
-               </div>
-               <div class="row">
-                 <div class="col-6">Net Income:</div>
-                 <div class="col-6">{{ paycheck.netIncome }}</div>
-               </div>
-               <div class="row">
-                 <div class="col-6">Taxes:</div>
-                 <div class="col-6">{{ paycheck.taxAmount }}</div>
-               </div>
-               <div class="row">
-                 <div class="col-6">Savings:</div>
-                 <div class="col-6">{{ paycheck.savings }}</div>
-               </div>
-               <div class="row">
-                 <div class="col-6">Tithe:</div>
-                 <div class="col-6">{{ paycheck.tithe }}</div>
-               </div>
-               <div class="row">
-                 <div class="col-6">Investments:</div>
-                 <div class="col-6">{{ paycheck.investments }}</div>
-               </div>
-               <div class="row">
-                 <div class="col-6">Remaining Amount:</div>
-                 <div class="col-6">{{ paycheck.remainingIncome }}</div>
-               </div>
-               <div v-if="!paycheck.details" class="row">
-                 <div class="col-6">Details:</div>
-                 <div class="col-6">Add details</div>
-               </div>
-               <div v-else class="row">
-                 <div class="col-6">Details:</div>
-                 <div class="col-6">{{ paycheck.details }}</div>
-               </div>
-             </div>
-           </div>
-         </div>
-       </div>
-     </div>
-   </div>
- </template>
+  <div class="container-fluid">
+    <div class="row">
+      <div>edit<i class="mdi mdi-pencil"></i></div>
+
+      <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+              <tbody>
+                <tr>
+                  <td>Pay Period : <i>{{formatDate(paycheck.payPeriodStartDate)}} - {{formatDate(paycheck.payPeriodEndDate)}}</i></td>
+                  <td>Payed On <i>{{ formatDate(paycheck.paycheckDate)}}</i></td>
+                </tr>
+                <tr>
+                  <td class="title">Gross Income:</td>
+                  <td class="money"><b>${{ paycheck.grossIncome }}</b></td>
+                </tr>
+                <tr>
+                  <td class="title">Net Income:</td>
+                  <td class="money">${{ paycheck.netIncome }}</td>
+                </tr>
+                <tr>
+                  <td class="title">Taxes:</td>
+                  <td class="money">${{ paycheck.taxAmount }}</td>
+                </tr>
+                <tr>
+                  <td class="title">Savings:</td>
+                  <td class="money">${{ paycheck.savings }}</td>
+                </tr>
+                <tr>
+                  <td class="title">Investments:</td>
+                  <td class="money">${{ paycheck.investments }}</td>
+                </tr>
+                <tr>
+                  <td class="title">Tithe:</td>
+                  <td class="money">${{ paycheck.tithe }}</td>
+                </tr>
+                <tr>
+                  <td class="title">Remaining Income:</td>
+                  <td class="money"><b>${{ paycheck.remainingIncome }}</b></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+    </div>
+  </div>
+</template>
  
  <script>
  import { computed } from 'vue'
@@ -72,45 +59,62 @@
          const day = date.getDate()
          const year = date.getFullYear().toString().slice(-2)
          return `${month < 10 ? '0' : ''}${month}/${day < 10 ? '0' : ''}${day}/${year}`
-       },
+       }
      }
    },
  }
  </script>
  
- <style>
- .container {
-   padding: 20px;
+ <style scoped>
+ /* Desktop Styling */
+ @media only screen and (min-width: 768px) {
+  .container-fluid{
+    padding-right: 16vw;
+    padding-left: 16vw;
+  }
  }
+ /* Mobile Styling */
+ @media only screen and (max-width: 768px) {
+  .container-fluid{
+    padding-right: 5vw;
+    padding-left: 5vw;
+  }
+ }
+
+ .note{
+  background-color: brown;
+  border-radius: 4px;
+  padding: 0;
+  margin: 0;
+ }
+
+.container-fluid {
+  margin-top: 5vh;
+}
+ .row{
+  height: 80vh;
+  border-radius: 5px;
+ }
+ .test{
+  border: 1px solid blue;
+ }
+ .tbody{
+  width: auto;
+ }
+ .title{
+  font-size: 18px;
+ }
+ .money{
+  font-size: 18px;
+  /* font-weight: bold; */
+ }
+ .edit{
+  text-align: right;
+  width:auto;
+ }
+ .selectable:hover{
+  cursor: pointer;
+}
  
- .card {
-   border: none;
-   border-radius: 10px;
-   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-   background-color: #fff;
-   padding: 20px;
- }
- 
- .card-title {
-   font-size: 24px;
-   font-weight: bold;
-   margin-bottom: 20px;
- }
- 
- .card-text {
-   font-size: 18px;
- }
- 
- .row {
-   margin-bottom: 10px;
- }
- 
- .col-6 {
-   font-weight: bold;
- }
- 
- .col-12 {
-   margin-bottom: 20px;
- }
  </style>
  

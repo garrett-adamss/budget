@@ -1,5 +1,9 @@
 <template>
   <div class="">
+     <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#paycheckModal">
+      paycheck
+    </button>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#paycheckCreate">
       paycheck +
     </button>
@@ -55,7 +59,7 @@ import { logger } from '../utils/Logger'
 import Pop from '../utils/Pop'
 import { AppState } from '../AppState';
 import { router } from '../router';
-import { top } from '@popperjs/core';
+import { Modal } from 'bootstrap';
 
 export default {
   name: 'PaychecksPage',
@@ -114,8 +118,8 @@ export default {
       filteredColumns,
       async toPaycheckPage(id){
         try {
+          router.push({ name: 'Paycheck', params: { id: id } })
           await paychecksService.getOne(id);
-          router.push({name: 'Paycheck', params: {id}})  
         }
         catch (error) {
            logger.error(error)
