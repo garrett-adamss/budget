@@ -1,8 +1,6 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div>edit<i class="mdi mdi-pencil"></i></div>
-
       <div class="table-responsive">
             <table class="table table-bordered table-striped">
               <tbody>
@@ -12,11 +10,11 @@
                 </tr>
                 <tr>
                   <td class="title">Gross Income:</td>
-                  <td class="money"><b>${{ paycheck.grossIncome }}</b></td>
+                  <td class="money">${{ paycheck.grossIncome }}</td>
                 </tr>
                 <tr>
                   <td class="title">Net Income:</td>
-                  <td class="money">${{ paycheck.netIncome }}</td>
+                  <td class="money"><b>${{ paycheck.netIncome }}</b></td>
                 </tr>
                 <tr>
                   <td class="title">Taxes:</td>
@@ -40,6 +38,7 @@
                 </tr>
               </tbody>
             </table>
+            <div>Edit<i class="mdi mdi-pencil"></i></div>
           </div>
     </div>
   </div>
